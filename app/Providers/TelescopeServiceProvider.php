@@ -17,7 +17,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     public function register()
     {
         // Telescope::night();
-
+        if ($this->app->environment('testing') ) {
+           // $this->app->register(TelescopeServiceProvider::class);
+           return false;
+        }
         $this->hideSensitiveRequestDetails();
 
         Telescope::filter(function (IncomingEntry $entry) {
@@ -31,6 +34,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
                    $entry->isScheduledTask() ||
                    $entry->hasMonitoredTag();
         });
+        
     }
 
     /**
