@@ -12,38 +12,38 @@ class SalesFeatureTest extends TestCase
     use RefreshDatabase; // Use RefreshDatabase to reset the database between tests
 
     /** @test */
-    public function it_can_handle_single_product_when_feature_is_true()
+    public function it_can_handle_multiple_products_when_feature_is_false()
     {
         // Arrange: Create a user for authentication
         $user = User::factory()->create();
         $this->actingAs($user); // Authenticate the user
 
-        // Create the default product (Gold Coffee)
-        $product = Product::create([
+        // Create multiple products
+        $product1 = Product::create([
             'name' => 'Gold Coffee',
             'profit_margin' => 0.2,
             'shipping_cost' => 2.00,
         ]);
 
-        // Set defaultCoffeeFeature to true (single product)
-        config(['app.defaultCoffeeFeature' => true]);
+        $product2 = Product::create([
+            'name' => 'Arabica Coffee',
+            'profit_margin' => 0.3,
+            'shipping_cost' => 1.50,
+        ]);
+
+        // Set defaultCoffeeFeature to false (multiple products)
+        config(['app.defaultCoffeeFeature' => false]);
 
         // Act: Make a request to the sales index route
         $response = $this->get('/sales');
 
-        // Assert: Check if the single product is retrieved
+        // Assert: Check if both products are shown and the dropdown is displayed
         $response->assertStatus(200);
-        $response->assertSee($product->name); // Check that the product name is present
-        
-        // Assert that the select element exists
-    $response->assertSee('<select id="product"', false); // Ensure the select exists
-
-    // Check that the select element is present and hidden
-    $response->assertSee('style="display:none"', false); // Ensure display is set to none
-
-    // Check if the Gold Coffee option is selected
-    $response->assertSee('<option value="1" selected="selected">', false); // Check if the Gold Coffee option is selected
+        $response->assertSee($product1->name);
+        $response->assertSee($product2->name);
+        $response->assertSee('<option value="" disabled selected>Select a product</option>', false); // Check the dropdown is visible
+        $response->assertSee('<option value="'.$product1->id.'">', false); // Check if first product is selected
+        $response->assertSee('<option value="'.$product2->id.'">', false); // Check if second product is selected
     }
-
  
 }

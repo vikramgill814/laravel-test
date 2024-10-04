@@ -23,7 +23,7 @@ class SaleController extends Controller
      * - true: Only for the default product (Golden Coffee).
      * - false: Applicable for all products.
      * */
-    protected $defaultCoffeeFeature = True;
+    protected $defaultCoffeeFeature = false;
     /**
      * @var int $defaultProductId
      * The ID of the default product (Golden Coffee).
